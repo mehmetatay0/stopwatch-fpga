@@ -16,23 +16,22 @@ end test;
 
 architecture Behavioral of test is
 
-signal counter : integer := 0;
+signal counter : std_logic_vector := 100_000_000;
+signal timer   : std_logic_vector := 100_000_000;
+
 begin
 
 process (clk)
 begin
     if clk'event and clk = '1' then
         
-        if sw_i = '1' then
+        if timer >= counter-1 then
         
-            an(0)   <= '0';
-            seg     <= (others => '0' );
         
+        counter <= 0;
         end if;
 
     end if;
 end process;
-
-
 
 end Behavioral;
