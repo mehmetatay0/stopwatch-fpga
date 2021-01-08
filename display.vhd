@@ -17,21 +17,17 @@ end display;
 
 architecture Behavioral of display is
 
-    signal use_digit_1, use_digit_2, use_digit_3, use_digit_4 : integer := 0;
-    signal digit_value : integer := 4;
-    signal counter_2 : integer := 0;
+    signal use_digit_1  : integer := 0;
+    signal use_digit_2  : integer := 0;
+    signal use_digit_3  : integer := 0;
+    signal use_digit_4  : integer := 0;
 
 begin
 
-    use_digit_1 <= digit_value;
-    use_digit_2 <= digit_value;
-    use_digit_3 <= digit_value;
-    use_digit_4 <= digit_value;
-
-    process (clk)
+    process (clk_refresh)
     variable digit : std_logic_vector(1 downto 0) := (others => '0') ;
     begin
-        if clk'event and clk = '1' then
+        if clk_refresh'event and clk_refresh = '1' then
 
             case( digit ) is
             
@@ -52,7 +48,7 @@ begin
                             cathode <=  "0110000";    
                         when  4 =>
                             anode   <=  "1110";
-                            cathode <=  "0011000";
+                            cathode <=  "0011001";
                         when  5 =>
                             anode   <=  "1110";
                             cathode <=  "0010010";
@@ -198,13 +194,31 @@ begin
         end if;
     end process;
     
-    COUNTER : process (clk_refresh) -- 2sn 
+    COUNTER : process (clk_dig)  
     begin
-        if clk_refresh'event and clk_refresh = '1' then
-            digit_value <= digit_value + 1;
-            if digit_value = 9 then
-                digit_value <= 0;
+        if clk_dig'event and clk_dig = '1' then
+
+            use_digit_1 <= use_digit_1 + 1;
+
+            if use_digit_1 = 10 then
+                use_digit_1 <= 0;
+                use_digit_2 <= use_digit_2 + 1;
             end if;
+
+            if use_digit_2 = 10 then
+                use_digit_2 <= 0;
+                use_digit_3 <= use_digit_3 + 1;
+            end if;
+
+            if use_digit_3 = 10 then
+                use_digit_3 <= 0;
+                use_digit_4 <= use_digit_4 + 1;
+            end if;
+
+            if use_digit_4 = 6 then
+                use_digit_4 <= 0;
+            end if;
+
         end if;
     end process;
 

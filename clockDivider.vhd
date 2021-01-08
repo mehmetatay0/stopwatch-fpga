@@ -17,11 +17,11 @@ signal counter_2 : integer      := 0;
 
 begin
 
-process (clk)
+process (clk)                       -- Saat clock değeri
 begin
     if clk'event and clk = '1' then
         counter_1 <= counter_1 + 1;
-        if counter_1 = 1000000 then
+        if counter_1 = 500_000 then -- 50 MHz
             temp_1 <= not temp_1;
             counter_1 <= 0;
         end if;
@@ -32,8 +32,8 @@ process (clk)
 begin
     if clk'event and clk = '1' then
         counter_2 <= counter_2 + 1;
-        if counter_2 = 100000000 then
-            temp_2 <= not temp_2;
+        if counter_2 = 100000 then      
+            temp_2 <= not temp_2;       
             counter_2 <= 0;
         end if;
     end if;
