@@ -5,7 +5,7 @@ use ieee.std_logic_unsigned.all;
 
 entity display is
 port(
-    push_buttons    : in    std_logic_vector(3 downto 0) := ((others => '0') );
+    push_buttons    : in    std_logic_vector(3 downto 0) := (others => '0') ;
     clk             : in    std_logic := '0';
     clk_refresh     : in    std_logic := '0'; 
     clk_dig         : in    std_logic := '0';
@@ -21,6 +21,8 @@ architecture Behavioral of display is
     signal use_digit_2  : integer := 0;
     signal use_digit_3  : integer := 0;
     signal use_digit_4  : integer := 0;
+    signal reset_btn_en : std_logic := '0';
+    signal start_en     : std_logic := '1';
 
 begin
 
@@ -197,28 +199,57 @@ begin
     COUNTER : process (clk_dig)  
     begin
         if clk_dig'event and clk_dig = '1' then
+            if start_en = '1' then
 
-            use_digit_1 <= use_digit_1 + 1;
+                use_digit_1 <= use_digit_1 + 1;
 
-            if use_digit_1 = 10 then
+                if use_digit_1 = 10 then
+                    use_digit_1 <= 0;
+                    use_digit_2 <= use_digit_2 + 1;
+                end if;
+
+                if use_digit_2 = 10 then
+                    use_digit_2 <= 0;
+                    use_digit_3 <= use_digit_3 + 1;
+                end if;
+
+                if use_digit_3 = 10 then
+                    use_digit_3 <= 0;
+                    use_digit_4 <= use_digit_4 + 1;
+                end if;
+
+                if use_digit_4 = 6 then
+                    use_digit_4 <= 0;
+                end if;
+            end if;
+
+            if reset_btn_en = '1' then
                 use_digit_1 <= 0;
-                use_digit_2 <= use_digit_2 + 1;
-            end if;
-
-            if use_digit_2 = 10 then
                 use_digit_2 <= 0;
-                use_digit_3 <= use_digit_3 + 1;
-            end if;
-
-            if use_digit_3 = 10 then
                 use_digit_3 <= 0;
-                use_digit_4 <= use_digit_4 + 1;
-            end if;
-
-            if use_digit_4 = 6 then
                 use_digit_4 <= 0;
             end if;
 
+        end if;
+    end process;
+
+    RESET : process (clk) 
+    begin
+        if clk'event and clk = '1' then
+            if push_buttons(0) = '1' then
+                reset_btn_en <= '1';
+            else
+                reset_btn_en <= '0';
+            end if;
+        end if;
+    end process;
+
+    START_STOP : process (clk_dig)
+    begin
+        if clk_dig'event and clk_dig = '1' then
+            if push_buttons(1) = '1' then
+                start_en <= not start_en;
+            end if;
         end if;
     end process;
 
