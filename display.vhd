@@ -6,6 +6,7 @@ use ieee.std_logic_unsigned.all;
 entity display is
 port(
     push_buttons    : in    std_logic_vector(3 downto 0) := ((others => '0') );
+    clk             : in    std_logic := '0';
     clk_refresh     : in    std_logic := '0'; 
     clk_dig         : in    std_logic := '0';
     anode           : out   std_logic_vector(3 downto 0) := (others => '1');
@@ -27,10 +28,10 @@ begin
     use_digit_3 <= digit_value;
     use_digit_4 <= digit_value;
 
-    process (clk_refresh)
+    process (clk)
     variable digit : std_logic_vector(1 downto 0) := (others => '0') ;
     begin
-        if clk_refresh'event and clk_refresh = '1' then
+        if clk'event and clk = '1' then
 
             case( digit ) is
             
@@ -197,16 +198,12 @@ begin
         end if;
     end process;
     
-    COUNTER : process (clk_refresh)
+    COUNTER : process (clk_refresh) -- 2sn 
     begin
         if clk_refresh'event and clk_refresh = '1' then
-            counter_2 <= counter_2 + 1;
-            if counter_2 > 100000000 then
-                digit_value <= digit_value + 1;
-                if digit_value = 9 then
-                    digit_value <= 0;
-                end if;
-                counter_2 <= 0;
+            digit_value <= digit_value + 1;
+            if digit_value = 9 then
+                digit_value <= 0;
             end if;
         end if;
     end process;
